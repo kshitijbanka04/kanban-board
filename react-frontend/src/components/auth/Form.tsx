@@ -30,7 +30,7 @@ function Form(props: Props) {
     try {
       await onSubmit(form);
       toast(type === 'LOGIN' ? 'You have logged in!' : 'Your account is created!');
-      window.location.replace('http://localhost:5174/project'); //with refresh
+      window.location.replace('http://localhost:5173/project'); //with refresh
     } catch (error) {
       setError(((error as AxiosError).response?.data as APIERROR).message);
     }
