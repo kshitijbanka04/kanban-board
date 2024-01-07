@@ -10,6 +10,7 @@ import {
 import toast from 'react-hot-toast';
 import { APIERROR } from '../../api/apiTypes';
 import InputWithValidation from '../util/InputWithValidation';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 interface Props {
   register: UseFormRegister<FieldValues>;
@@ -29,8 +30,10 @@ function Form(props: Props) {
   const submit = handleSubmit(async (form) => {
     try {
       await onSubmit(form);
+
+      const navigate = useNavigate();
       toast(type === 'LOGIN' ? 'You have logged in!' : 'Your account is created!');
-      window.location.replace('http://localhost:5174/project'); //with refresh
+      navigate("/project");
     } catch (error) {
       setError(((error as AxiosError).response?.data as APIERROR).message);
     }

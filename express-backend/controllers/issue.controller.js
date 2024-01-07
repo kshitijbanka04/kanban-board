@@ -31,9 +31,46 @@ exports.getIssuesInProject = async (req, res) => {
 				[id]: issues.map(({ _count,issueId, ...issue }) => ({ ...issue, ..._count })),
 			}),
 			{}
-		)
+		);
 
-		res.json(issues).end()
+		const updatedIssues = await Promise.all(
+			listIssues.map(async ({ id, issues }) => {
+			  const updatedIssuesArray = await Promise.all(
+				issues.map(async (issue) => {
+				  const tagsForIssue = await client.tagIssueMapping.findMany({
+					where: {
+					  issueId: issue.id,
+					},
+					select: {
+					  tagName: true,
+					},
+				  });
+		  
+				  const tagsArrayForIssue = tagsForIssue.map((tagObject) => tagObject.tagName);
+				  console.log(tagsArrayForIssue)
+				  return {
+					...issue,
+					tags: tagsArrayForIssue,
+				  };
+				})
+			  );
+		  
+			  return {
+				id,
+				issues: updatedIssuesArray,
+			  };
+			})
+		  );
+
+		  let latestIssues = {};
+
+		  updatedIssues.forEach((elem)=> {
+			latestIssues[elem.id] = elem.issues
+		  })
+
+
+
+		res.json(latestIssues).end()
 	} catch (err) {
 		console.log(err)
 		return badRequest(res)
@@ -43,9 +80,7 @@ exports.getIssuesInProject = async (req, res) => {
 exports.createIssue = async (req, res) => {
 	try {
 		const { projectId, listId, assignees, tags, dependantOn, ...data } = req.body // opt out projectId
-		console.log("data", data)
-		console.log("tags", tags)
-		console.log("dependantOn", dependantOn)
+
 		
 		const { _count: order } = await client.issue.aggregate({ where: { listId }, _count: true })
 		const { id: issueId } = await client.issue.create({
@@ -61,9 +96,7 @@ exports.createIssue = async (req, res) => {
 			data: tags.map((tagName) => ({ issueId, tagName })),
 		}) 
 
-		await client.IssueDependsOnMapping.createMany({
-			data: dependantOn.map((teamName) => ({ issueId, teamName })),
-		}) 
+	
 
 
 		// await client.TagIssueMapping.createMany({

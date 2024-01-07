@@ -1,4 +1,4 @@
-import { Dispatch, lazy, SetStateAction, Suspense as S, useState } from 'react';
+import { Dispatch, lazy, SetStateAction, Suspense as S, useState, useEffect } from 'react';
 import { APIERROR } from '../../api/apiTypes';
 import { Navigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
@@ -9,6 +9,7 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setIssueQuery } from '../../store/slices/querySlice';
 import Avatar from '../util/Avatar';
 import toast from 'react-hot-toast';
+import { useDebounceValue } from '../../use-debounce';
 const IssueModelHOC = lazy(() => import('../issue/IssueModelHOC'));
 const CreateIssueModal = lazy(() => import('../issue/CreateIssueModal'));
 
@@ -41,6 +42,10 @@ function Filter(props: Props) {
     dispatch(setIssueQuery(query));
     setIsDragDisabled(!!query.userId);
   };
+
+  useEffect(() => {
+    
+  })
 
   return (
     <div className='mb-8 flex min-w-fit items-center text-c-5'>

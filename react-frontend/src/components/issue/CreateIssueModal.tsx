@@ -21,15 +21,27 @@ const CreateIssueModel = (props: IssueModalProps) => {
 
   if (!u) return null;
 
+  const tags = [
+    {icon:"", text:"Prod Dev", value: "Prod Dev"},
+    {icon:"", text:"Design", value: "Design"},
+    {icon:"", text:"Marketing", value: "Marketing"},
+    {icon:"", text:"Sales", value: "Sales"},
+    {icon:"", text:"Product", value: "Product"}
+  ]
+
   if (error && (error as APIERROR).status === 401) return <Navigate to='/login' />;
 
   const handleCreateIssue = async () => {
+
+    console.log(form)
     if (!form.summary) return setErr('summary must not be empty');
     if (!u || form.summary.length > 100 || form.descr.length > 500) return;
     await createIssue({ ...form, reporterId: u.id, projectId }); //for now
     toast('Created an issue!');
     onClose();
   };
+
+  console.log(members)
 
   return (
     <Model onSubmit={handleCreateIssue} {...{ onClose, isLoading }} className='max-w-[35rem]'>
@@ -92,6 +104,15 @@ const CreateIssueModel = (props: IssueModalProps) => {
             className='w-full'
           />
         </WithLabel>
+        <WithLabel label='Tags'>
+              <DropDown
+                list={tags}
+                dispatch={dispatch}
+                actionType='tags'
+                type='multiple'
+                className='w-full'
+              />
+            </WithLabel>
         {lists && (
           <WithLabel label='Status'>
             <DropDown
@@ -140,6 +161,8 @@ const reducer = (state: State, { type, value }: A): State => {
       return { ...state, priority: value as number };
     case 'listId':
       return { ...state, listId: value as number };
+    case 'tags': 
+       return {...state, tags: value}
     default:
       return state;
   }

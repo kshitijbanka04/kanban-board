@@ -45,6 +45,8 @@ const Board = (props: Props) => {
     toast('Created a list!');
   };
 
+  
+
   return (
     <div className='mb-5 flex min-w-max grow items-start'>
       <DragDropContext onDragEnd={onDragEnd}>
