@@ -1,25 +1,18 @@
-import {
-  Dispatch,
-  lazy,
-  SetStateAction,
-  Suspense as S,
-  useState,
-  useEffect,
-  useRef,
-} from "react";
-import { APIERROR } from "../../api/apiTypes";
-import { Navigate, useSearchParams } from "react-router-dom";
-import { Icon } from "@iconify/react";
-import { useMembersQuery } from "../../api/endpoints/member.endpoint";
-import { useAuthUserQuery } from "../../api/endpoints/auth.endpoint";
-import { useProjectQuery } from "../../api/endpoints/project.endpoint";
-import { useAppSelector, useAppDispatch } from "../../store/hooks";
-import { setIssueQuery } from "../../store/slices/querySlice";
-import Avatar from "../util/Avatar";
-import { useDebounceValue } from "../../use-debounce";
-import toast from "react-hot-toast";
-const IssueModelHOC = lazy(() => import("../issue/IssueModelHOC"));
-const CreateIssueModal = lazy(() => import("../issue/CreateIssueModal"));
+import { Dispatch, lazy, SetStateAction, Suspense as S, useState, useEffect } from 'react';
+import { APIERROR } from '../../api/apiTypes';
+import { Navigate } from 'react-router-dom';
+import { Icon } from '@iconify/react';
+import { useMembersQuery } from '../../api/endpoints/member.endpoint';
+import { useAuthUserQuery } from '../../api/endpoints/auth.endpoint';
+import { useProjectQuery } from '../../api/endpoints/project.endpoint';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { setIssueQuery } from '../../store/slices/querySlice';
+import Avatar from '../util/Avatar';
+import toast from 'react-hot-toast';
+import { useDebounceValue } from '../../use-debounce';
+const IssueModelHOC = lazy(() => import('../issue/IssueModelHOC'));
+const CreateIssueModal = lazy(() => import('../issue/CreateIssueModal'));
+
 
 interface Props {
   setIsDragDisabled: Dispatch<SetStateAction<boolean>>;
@@ -52,6 +45,7 @@ function Filter(props: Props) {
     dispatch(setIssueQuery(query));
     setIsDragDisabled(!!query.userId);
   };
+
 
   const inputRef = useRef<any>(null);
 

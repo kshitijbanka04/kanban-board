@@ -34,6 +34,7 @@ const IssueDetailModal = (props: IssueModalProps) => {
     assignees,
     summary,
     descr,
+    tags,
     createdAt,
     updatedAt,
   } = issues[issue.idx];
@@ -146,6 +147,16 @@ const IssueDetailModal = (props: IssueModalProps) => {
                 actionType='priority'
                 type='normal'
               />
+            </WithLabel>
+            <WithLabel label='Tags'>
+              <div className='flex flex-col gap-2 mb-2'>
+              {tags.map((tag)=> (
+                <span className='rounded-full py-2 px-4 bg-slate-200 w-fit text-sm'>
+                  {tag}
+                </span>
+              ))}
+              </div>
+              
             </WithLabel>
             <hr className='border-t-[.5px] border-gray-400' />
             <div className='mt-4 text-sm text-gray-700'>
