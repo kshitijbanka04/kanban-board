@@ -1,6 +1,6 @@
-import { Dispatch, lazy, SetStateAction, Suspense as S, useState, useEffect } from 'react';
+import { Dispatch, lazy, SetStateAction, Suspense as S, useState, useEffect, useRef } from 'react';
 import { APIERROR } from '../../api/apiTypes';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { useMembersQuery } from '../../api/endpoints/member.endpoint';
 import { useAuthUserQuery } from '../../api/endpoints/auth.endpoint';

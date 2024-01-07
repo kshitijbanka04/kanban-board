@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 import {
   useState,
 } from "react";
-import { Navigate, useSearchParams } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { APIERROR } from "../../api/apiTypes";
 import { selectAuthUser } from "../../api/endpoints/auth.endpoint";
 import { useProjectsQuery } from "../../api/endpoints/project.endpoint";
