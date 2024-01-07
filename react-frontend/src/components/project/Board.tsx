@@ -11,19 +11,19 @@ import toast from 'react-hot-toast';
 
 interface Props {
   lists: ApiList[];
-  issues?: Issues;
+  filteredIssues?: Issues;
   isDragDisabled: boolean;
 }
 
 const Board = (props: Props) => {
-  const { lists, issues, isDragDisabled } = props;
+  const { lists, filteredIssues, isDragDisabled } = props;
   const [reorderLists] = useReorderListsMutation();
   const [reorderIssues] = useReorderIssuesMutation();
   const [createList, { isLoading }] = useCreateListMutation();
   const projectId = Number(useParams().projectId);
 
   const onDragEnd = ({ type, source: s, destination: d }: DropResult) => {
-    if (!lists! || !issues || !d || (s.droppableId === d.droppableId && s.index === d.index))
+    if (!lists! || !filteredIssues || !d || (s.droppableId === d.droppableId && s.index === d.index))
       return;
     type === 'list'
       ? reorderLists({
@@ -33,7 +33,7 @@ const Board = (props: Props) => {
           projectId,
         })
       : reorderIssues({
-          id: issues[parseId(s)][s.index].id,
+          id: filteredIssues[parseId(s)][s.index].id,
           s: { sId: parseId(s), order: s.index + 1 }, // change index to actual order
           d: { dId: parseId(d), newOrder: d.index + 1 }, // change index to actual order
           projectId,
@@ -60,7 +60,7 @@ const Board = (props: Props) => {
             <List
               key={props.id}
               idx={i}
-              issues={issues?.[props.id]}
+              issues={filteredIssues?.[props.id]}
               isDragDisabled={isDragDisabled}
               {...props}
             />

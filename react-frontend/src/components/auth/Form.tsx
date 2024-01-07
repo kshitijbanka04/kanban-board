@@ -34,6 +34,7 @@ function Form(props: Props) {
       const navigate = useNavigate();
       toast(type === 'LOGIN' ? 'You have logged in!' : 'Your account is created!');
       navigate("/project");
+
     } catch (error) {
       setError(((error as AxiosError).response?.data as APIERROR).message);
     }

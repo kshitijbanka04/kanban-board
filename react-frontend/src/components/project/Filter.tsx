@@ -13,6 +13,7 @@ import { useDebounceValue } from '../../use-debounce';
 const IssueModelHOC = lazy(() => import('../issue/IssueModelHOC'));
 const CreateIssueModal = lazy(() => import('../issue/CreateIssueModal'));
 
+
 interface Props {
   setIsDragDisabled: Dispatch<SetStateAction<boolean>>;
   projectId: number;
@@ -28,13 +29,15 @@ function Filter(props: Props) {
   const [on, setOn] = useState(false);
   const dispatch = useAppDispatch();
   const [fold, setFold] = useState(true);
-  const [value, setValue] = useState<string>('');
+  const [inputValue, setInputValue] = useState<string>("");
+  let [searchParams, setSearchParams] = useSearchParams();
   const len = m?.length;
 
-  if (error && (error as APIERROR).status === 401) return <Navigate to='/login' />;
+  if (error && (error as APIERROR).status === 401)
+    return <Navigate to="/login" />;
 
   function handleClick() {
-    if (isEmpty) return toast.error('Please create a list first!');
+    if (isEmpty) return toast.error("Please create a list first!");
     setOn(true);
   }
 
@@ -43,43 +46,58 @@ function Filter(props: Props) {
     setIsDragDisabled(!!query.userId);
   };
 
+
+  const inputRef = useRef<any>(null);
+
+  // EFFECT: Debounce Input Value
+  const debounceSearch = useDebounceValue(inputValue, 500);
+
   useEffect(() => {
-    
-  })
+    const params = new URLSearchParams(window.location.search);
+    if (debounceSearch.length > 0) {
+      params.set("search", debounceSearch);
+    } else {
+      params.delete("search");
+    }
+    setSearchParams(params);
+  }, [debounceSearch]);
 
   return (
-    <div className='mb-8 flex min-w-fit items-center text-c-5'>
-      <div className='relative'>
+    <div className="mb-8 flex min-w-fit items-center text-c-5">
+      <div className="relative">
         <input
-          value={value}
-          onChange={(e: any) => setValue(e.target.value)}
-          placeholder='Search issues'
-          className='w-44 rounded-sm border-[1.5px] bg-transparent py-[5px] pl-9 pr-2 text-sm outline-none focus:border-chakra-blue'
+          ref={inputRef}
+          value={inputValue}
+          onChange={(e: any) => setInputValue(e.target.value)}
+          placeholder="Search issues"
+          className="w-44 rounded-sm border-[1.5px] bg-transparent py-[5px] pl-9 pr-2 text-sm outline-none focus:border-chakra-blue"
         />
         <Icon
           width={20}
-          icon='ant-design:search-outlined'
-          className='absolute top-[6px] left-2 w-[19px]'
+          icon="ant-design:search-outlined"
+          className="absolute left-2 top-[6px] w-[19px]"
         />
       </div>
       {m && len && (
-        <div className='ml-7 mr-1 flex'>
-          {(len > 4 && fold ? m.slice(0, 4) : m).map(({ profileUrl, username, userId }, i) => (
-            <Avatar
-              key={userId}
-              src={profileUrl}
-              name={username}
-              style={{ zIndex: len - i }}
-              onClick={handleSetQuery({ userId })}
-              className={`-ml-2 h-11 w-11 border-2 duration-300 hover:-translate-y-2 ${
-                userId === uid ? 'border-blue-500' : ''
-              }`}
-            />
-          ))}
+        <div className="ml-7 mr-1 flex">
+          {(len > 4 && fold ? m.slice(0, 4) : m).map(
+            ({ profileUrl, username, userId }, i) => (
+              <Avatar
+                key={userId}
+                src={profileUrl}
+                name={username}
+                style={{ zIndex: len - i }}
+                onClick={handleSetQuery({ userId })}
+                className={`-ml-2 h-11 w-11 border-2 duration-300 hover:-translate-y-2 ${
+                  userId === uid ? "border-blue-500" : ""
+                }`}
+              />
+            )
+          )}
           {len > 4 && fold && (
             <button
               onClick={() => setFold(false)}
-              className='-ml-2 grid h-11 w-11 items-center rounded-full bg-c-2 pl-2 hover:bg-c-3'
+              className="-ml-2 grid h-11 w-11 items-center rounded-full bg-c-2 pl-2 hover:bg-c-3"
             >
               {len - 4}+
             </button>
@@ -87,34 +105,40 @@ function Filter(props: Props) {
         </div>
       )}
       {u && (
-        <button className='btn-crystal shrink-0' onClick={handleSetQuery({ userId: u.id })}>
+        <button
+          className="btn-crystal shrink-0"
+          onClick={handleSetQuery({ userId: u.id })}
+        >
           Only my issues
         </button>
       )}
       {uid && (
         <>
-          <div className='pb-[2px]'>|</div>
-          <button className='btn-crystal shrink-0' onClick={handleSetQuery({})}>
+          <div className="pb-[2px]">|</div>
+          <button className="btn-crystal shrink-0" onClick={handleSetQuery({})}>
             Clear all
           </button>
         </>
       )}
-      <button onClick={handleClick} className='btn peer relative mx-5 shrink-0'>
+      <button onClick={handleClick} className="btn peer relative mx-5 shrink-0">
         Create an issue
       </button>
       {pj && pj.repo && (
         <button
-          title='go to github'
-          onClick={() => window.open(pj.repo as string, '_blank')}
-          className='ml-auto flex shrink-0 items-center gap-2 rounded-[3px] bg-c-2 py-1 px-3 hover:bg-c-6'
+          title="go to github"
+          onClick={() => window.open(pj.repo as string, "_blank")}
+          className="ml-auto flex shrink-0 items-center gap-2 rounded-[3px] bg-c-2 px-3 py-1 hover:bg-c-6"
         >
-          <Icon icon='bxl:github' />
+          <Icon icon="bxl:github" />
           GitHub Repo
         </button>
       )}
       {on && !isEmpty && (
         <S>
-          <IssueModelHOC children={CreateIssueModal} onClose={() => setOn(false)} />
+          <IssueModelHOC
+            children={CreateIssueModal}
+            onClose={() => setOn(false)}
+          />
         </S>
       )}
     </div>
