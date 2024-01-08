@@ -31,9 +31,8 @@ function Form(props: Props) {
     try {
       await onSubmit(form);
 
-      const navigate = useNavigate();
       toast(type === 'LOGIN' ? 'You have logged in!' : 'Your account is created!');
-      navigate("/project");
+      window.location.replace('http://localhost:5173/project'); ;
 
     } catch (error) {
       setError(((error as AxiosError).response?.data as APIERROR).message);
